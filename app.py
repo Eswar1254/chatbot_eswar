@@ -1,21 +1,29 @@
 # app.py
 import streamlit as st
 import openai
+import os
 
-# Set your OpenAI API key
-openai.api_key = "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"
+# Set your OpenAI API key using environment variable
+openai.api_key = os.environ.get("OPENAI_API_KEY", "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")
 
 def display_chat_history(messages):
     for message in messages:
         st.write(f"{message['role'].capitalize()}: {message['content']}")
 
 def get_assistant_response(messages):
-    r = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": m["role"], "content": m["content"]} for m in messages],
-    )
-    response = r['choices'][0]['message']['content']
-    return response
+    try:
+        r = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": m["role"], "content": m["content"]} for m in messages],
+        )
+        response = r['choices'][0]['message']['content']
+        return response
+    except openai.error.AuthenticationError as e:
+        st.error(f"Authentication Error: {e}")
+        st.stop()
+    except openai.error.OpenAIError as e:
+        st.error(f"OpenAI Error: {e}")
+        st.stop()
 
 def main():
     st.title("OpenAI GPT-3.5 Turbo Chatbot")

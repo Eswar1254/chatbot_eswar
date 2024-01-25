@@ -4,7 +4,7 @@ import openai
 import os
 
 # Set your OpenAI API key using environment variable
-openai.api_key = os.environ.get("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")
+openai.api_key = os.environ.get("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")
 
 def display_chat_history(messages):
     for message in messages:
